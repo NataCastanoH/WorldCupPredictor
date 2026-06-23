@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predictor Mundial 2026 · Modelo Klement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=Archivo+Expanded:wght@700;800;900&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pitch:#08190F; --pitch2:#0C2417; --panel:#0F2D1C; --line:#1C4A30;
+  --gold:#F2B636; --green:#3FD884; --ink:#ECF5EE; --mute:#8AA895; --dim:#5E7A68;
+  --red:#E8694B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:
+    radial-gradient(120% 90% at 50% -10%, #11341F 0%, var(--pitch) 60%) fixed,
+    repeating-linear-gradient(90deg, transparent 0 56px, rgba(255,255,255,.012) 56px 112px) fixed;
+  color:var(--ink); font-family:'Archivo',system-ui,sans-serif;
+  min-height:100vh; padding:32px 20px 60px; display:flex; justify-content:center;
+}
+.wrap{width:100%; max-width:680px}
+.eyebrow{font-family:'Spline Sans Mono',monospace; font-size:11px; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--gold); display:flex; align-items:center; gap:10px; margin-bottom:10px}
+.eyebrow::before{content:""; width:26px; height:1px; background:var(--gold)}
+h1{font-family:'Archivo Expanded','Archivo',sans-serif; font-weight:900; font-size:clamp(30px,7vw,46px);
+  line-height:.98; letter-spacing:-.01em; margin-bottom:6px}
+h1 em{font-style:normal; color:var(--green)}
+.sub{color:var(--mute); font-size:14px; margin-bottom:28px; max-width:46ch}
+.card{background:linear-gradient(180deg,var(--panel),#0B2114);
+  border:1px solid var(--line); border-radius:18px; padding:22px; margin-bottom:18px;
+  box-shadow:0 24px 60px -30px rgba(0,0,0,.8)}
+.selectors{display:grid; grid-template-columns:1fr auto 1fr; gap:14px; align-items:center}
+label.fl{display:block; font-family:'Spline Sans Mono',monospace; font-size:10px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--dim); margin-bottom:7px}
+select{width:100%; appearance:none; background:#0A1F13; color:var(--ink);
+  border:1px solid var(--line); border-radius:11px; padding:13px 14px; font-family:'Archivo';
+  font-weight:600; font-size:15px; cursor:pointer;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' stroke='%238AA895' stroke-width='1.6' fill='none'/></svg>");
+  background-repeat:no-repeat; background-position:right 14px center}
+select:focus-visible{outline:2px solid var(--gold); outline-offset:2px}
+.vs{font-family:'Archivo Expanded'; font-weight:900; color:var(--gold); font-size:20px; align-self:end; padding-bottom:11px}
+.row2{display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:16px; flex-wrap:wrap}
+.toggle{display:flex; align-items:center; gap:9px; cursor:pointer; user-select:none}
+.toggle input{display:none}
+.tk{width:42px; height:24px; border-radius:20px; background:#0A1F13; border:1px solid var(--line); position:relative; transition:.2s}
+.tk::after{content:""; position:absolute; width:18px; height:18px; border-radius:50%; background:var(--mute); top:2px; left:2px; transition:.2s}
+.toggle input:checked + .tk{background:rgba(242,182,54,.25); border-color:var(--gold)}
+.toggle input:checked + .tk::after{transform:translateX(18px); background:var(--gold)}
+.toggle span{font-size:13px; color:var(--mute)}
+.btn{background:var(--gold); color:#1A1305; border:none; border-radius:11px; padding:13px 26px;
+  font-family:'Archivo Expanded'; font-weight:800; font-size:14px; letter-spacing:.02em; cursor:pointer;
+  text-transform:uppercase; transition:.15s; flex:1; min-width:160px}
+.btn:hover{transform:translateY(-1px); box-shadow:0 10px 24px -8px rgba(242,182,54,.5)}
+.btn:active{transform:translateY(0)}
+/* scoreboard */
+.board{text-align:center; padding:8px 0 4px}
+.bteams{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:8px}
+.bteam{font-family:'Archivo Expanded'; font-weight:800; font-size:clamp(15px,3.6vw,20px); line-height:1.1}
+.bteam.r{color:var(--ink)}
+.score{font-family:'Spline Sans Mono'; font-weight:600; font-size:clamp(40px,12vw,64px); color:var(--gold);
+  letter-spacing:.02em; font-variant-numeric:tabular-nums}
+.score .d{color:var(--dim); margin:0 4px}
+.vsmid{font-family:'Archivo Expanded','Archivo',sans-serif; font-weight:900; color:var(--gold); font-size:14px; align-self:center}
+.xgline{text-align:center; font-family:'Spline Sans Mono'; font-size:12px; color:var(--mute); margin:12px 0 16px; letter-spacing:.04em}
+.xgline b{color:var(--gold); font-weight:600; font-size:16px}
+.podium{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; max-width:330px; margin:0 auto}
+.ps{background:#0A1F13; border:1px solid var(--line); border-radius:12px; padding:13px 6px; display:flex; flex-direction:column; align-items:center; gap:5px}
+.ps.top{border-color:var(--gold); background:rgba(242,182,54,.08)}
+.ps .sc{font-family:'Spline Sans Mono'; font-weight:600; font-size:clamp(20px,6vw,26px); color:var(--ink); font-variant-numeric:tabular-nums}
+.ps.top .sc{color:var(--gold)}
+.ps .sc i{color:var(--dim); font-style:normal; margin:0 1px}
+.ps .pc{font-family:'Spline Sans Mono'; font-size:12px; color:var(--mute)}
+.podlabel{text-align:center; font-family:'Spline Sans Mono'; font-size:9.5px; color:var(--dim); letter-spacing:.13em; margin-top:13px; line-height:1.4}
+.reco{margin:20px 0 4px; background:rgba(242,182,54,.07); border:1px solid var(--gold); border-radius:14px; padding:14px 16px}
+.recohead{font-family:'Archivo Expanded','Archivo',sans-serif; font-weight:800; color:var(--gold); font-size:14px; margin-bottom:10px; letter-spacing:.02em}
+.recorow{display:flex; gap:10px; padding:5px 0; border-top:1px solid rgba(242,182,54,.15); font-size:14px}
+.recorow:first-of-type{border-top:none}
+.recorow .rk{flex:0 0 84px; color:var(--mute); font-family:'Spline Sans Mono'; font-size:12px; text-transform:uppercase; letter-spacing:.05em; padding-top:1px}
+.recorow .rv{color:var(--ink); font-weight:500}
+.flag{font-size:30px; line-height:1; margin-bottom:6px}
+.barwrap{margin:22px 0 6px}
+.bar{height:30px; border-radius:8px; overflow:hidden; display:flex; border:1px solid var(--line); background:#0A1F13}
+.seg{height:100%; transition:width .7s cubic-bezier(.2,.8,.2,1); display:flex; align-items:center; justify-content:center;
+  font-family:'Spline Sans Mono'; font-weight:600; font-size:12px; color:#08190F; min-width:0; overflow:hidden; white-space:nowrap}
+.seg.a{background:var(--green)} .seg.d{background:#33503E; color:var(--mute)} .seg.b{background:var(--red)}
+.barlabels{display:flex; justify-content:space-between; margin-top:8px; font-family:'Spline Sans Mono'; font-size:11px; color:var(--mute)}
+.barlabels b{color:var(--ink); font-weight:600}
+.meta{display:grid; grid-template-columns:1fr 1fr; gap:1px; margin-top:20px; background:var(--line);
+  border:1px solid var(--line); border-radius:12px; overflow:hidden}
+.cell{background:var(--panel); padding:13px 15px}
+.cell .k{font-family:'Spline Sans Mono'; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); margin-bottom:5px}
+.cell .v{font-family:'Spline Sans Mono'; font-size:14px; color:var(--ink); font-weight:500}
+.adv{margin-top:14px; padding:12px 15px; border:1px dashed var(--gold); border-radius:11px;
+  font-family:'Spline Sans Mono'; font-size:13px; color:var(--gold); text-align:center; background:rgba(242,182,54,.06)}
+.read{margin-top:18px; border-top:1px solid var(--line); padding-top:16px}
+.readhead{font-family:'Spline Sans Mono'; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); margin-bottom:11px}
+.read .lead{font-family:'Archivo Expanded','Archivo',sans-serif; font-weight:700; font-size:15px; color:var(--ink); margin-bottom:13px; line-height:1.32}
+.read .just{font-size:14.5px; color:var(--ink); line-height:1.55; margin-bottom:4px}
+.read .forma{font-size:13px; color:var(--mute); line-height:1.5; margin-top:9px}
+.read .forma b{color:var(--green); font-weight:600}
+.fmgrid{margin-top:14px; display:grid; gap:10px}
+.fmgrid input{width:100%; background:#0A1F13; color:var(--ink); border:1px solid var(--line);
+  border-radius:10px; padding:11px 13px; font-family:'Archivo'; font-size:13.5px}
+.fmgrid input::placeholder{color:var(--dim)}
+.fmgrid input:focus-visible{outline:2px solid var(--gold); outline-offset:2px}
+.read .prof{font-size:13.5px; color:var(--mute); line-height:1.55; margin-bottom:9px; padding-left:19px; position:relative}
+.read .prof b{color:var(--ink); font-weight:600}
+.read .dot{position:absolute; left:0; top:7px; width:9px; height:9px; border-radius:50%}
+.read .dot.da{background:var(--green)} .read .dot.db{background:var(--red)}
+.read .dis{font-size:11.5px; color:var(--dim); font-style:italic; margin-top:11px; line-height:1.5}
+.weights{margin-top:4px}
+.weights summary{cursor:pointer; font-family:'Spline Sans Mono'; font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--mute); list-style:none; padding:6px 0}
+.weights summary::-webkit-details-marker{display:none}
+.weights summary::before{content:"⚙ "; color:var(--gold)}
+.wgrid{margin-top:14px; display:grid; gap:14px}
+.wrow{display:grid; grid-template-columns:90px 1fr 42px; gap:12px; align-items:center}
+.wrow label{font-size:13px; color:var(--mute)}
+.wrow output{font-family:'Spline Sans Mono'; font-size:13px; color:var(--green); text-align:right}
+input[type=range]{appearance:none; height:4px; border-radius:4px; background:var(--line)}
+input[type=range]::-webkit-slider-thumb{appearance:none; width:16px; height:16px; border-radius:50%; background:var(--gold); cursor:pointer}
+.foot{margin-top:22px; font-size:12.5px; color:var(--mute); line-height:1.6}
+.foot b{color:var(--gold); font-weight:600}
+.empty{text-align:center; color:var(--dim); font-family:'Spline Sans Mono'; font-size:13px; padding:30px 0}
+@media (max-width:480px){.meta{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Modelo Klement · Capa cuantitativa</div>
+  <h1>Predictor <em>Mundial 2026</em> <span style="font-family:'Spline Sans Mono';font-size:13px;color:var(--gold);border:1px solid var(--gold);border-radius:6px;padding:2px 7px;vertical-align:middle;letter-spacing:.05em">v2</span></h1>
+  <p class="sub">v2 · ahora con <b>forma real de la fecha 1</b>, capa de <b>ataque/defensa</b> y <b>recomendación</b>. Marcador probable y probabilidades (modelo Klement: FIFA · PIB · población · clima · sede). Elige dos selecciones.</p>
+
+  <div class="card">
+    <div class="selectors">
+      <div><label class="fl" for="ta">Local</label><select id="ta"></select></div>
+      <div class="vs">VS</div>
+      <div><label class="fl" for="tb">Visitante</label><select id="tb"></select></div>
+    </div>
+    <div class="row2">
+      <label class="toggle"><input type="checkbox" id="ko"><span class="tk"></span><span>Eliminación directa (resuelve empate)</span></label>
+      <button class="btn" id="go">Predecir</button>
+    </div>
+    <details class="weights">
+      <summary>Pesos del modelo</summary>
+      <div class="wgrid">
+        <div class="wrow"><label>FIFA</label><input type="range" id="wf" min="0" max="100" value="55"><output id="of">.55</output></div>
+        <div class="wrow"><label>Klement</label><input type="range" id="wk" min="0" max="100" value="25"><output id="ok">.25</output></div>
+        <div class="wrow"><label>Forma</label><input type="range" id="wo" min="0" max="100" value="25"><output id="oo">.25</output></div>
+      </div>
+    </details>
+    <details class="weights forma-box">
+      <summary>Forma del día · opcional</summary>
+      <div class="fmgrid">
+        <input type="text" id="fmA" placeholder="Local: nota de forma (ej. viene de ganarle a Francia)">
+        <input type="text" id="fmB" placeholder="Visitante: nota de forma (ej. 6 partidos invicto)">
+      </div>
+    </details>
+  </div>
+
+  <div class="card" id="result"><div class="empty">Sin predicción todavía.</div></div>
+
+  <p class="foot">
+    <b>Solo el Pilar 1.</b> Esta interfaz calcula la capa cuantitativa de Klement. El historial (MisterChip/Archivo Mundial), la forma reciente y el contexto —los otros tres pilares— se construyen con búsqueda web desde el chat.
+    Klement reconoce que <b>~45% del resultado es azar</b>: esto es una predicción, no un resultado oficial.
+  </p>
+</div>
+
+<script>
+const TEAMS=[{"t": "France", "fifa": 1877.32, "gdp": 46000, "pop": 65.0, "temp": 12, "lat": 1, "host": 0, "wc": 1, "ppg": 2.4, "tr": 1}, {"t": "Spain", "fifa": 1876.4, "gdp": 33000, "pop": 48.0, "temp": 15, "lat": 1, "host": 0, "wc": 1, "ppg": 2.6, "tr": 1}, {"t": "Argentina", "fifa": 1874.81, "gdp": 13000, "pop": 46.0, "temp": 18, "lat": 1, "host": 0, "wc": 1, "ppg": 2.2, "tr": 0}, {"t": "England", "fifa": 1825.97, "gdp": 49000, "pop": 56.0, "temp": 11, "lat": 0, "host": 0, "wc": 1, "ppg": 2.2, "tr": 0}, {"t": "Portugal", "fifa": 1763.83, "gdp": 27000, "pop": 10.0, "temp": 17, "lat": 1, "host": 0, "wc": 1, "ppg": 2.4, "tr": 1}, {"t": "Brazil", "fifa": 1761.16, "gdp": 10000, "pop": 216.0, "temp": 21, "lat": 1, "host": 0, "wc": 1, "ppg": 2.0, "tr": 1}, {"t": "Netherlands", "fifa": 1757.87, "gdp": 64000, "pop": 18.0, "temp": 10, "lat": 0, "host": 0, "wc": 1, "ppg": 2.4, "tr": 1}, {"t": "Morocco", "fifa": 1755.87, "gdp": 3700, "pop": 37.0, "temp": 18, "lat": 0, "host": 0, "wc": 1, "ppg": 2.2, "tr": 1}, {"t": "Belgium", "fifa": 1734.71, "gdp": 54000, "pop": 12.0, "temp": 11, "lat": 0, "host": 0, "wc": 1, "ppg": 1.8, "tr": -1}, {"t": "Germany", "fifa": 1730.37, "gdp": 52000, "pop": 84.0, "temp": 10, "lat": 0, "host": 0, "wc": 1, "ppg": 2.0, "tr": 1}, {"t": "Croatia", "fifa": 1717.07, "gdp": 20000, "pop": 3.9, "temp": 11, "lat": 0, "host": 0, "wc": 1, "ppg": 1.8, "tr": 0}, {"t": "Colombia", "fifa": 1693.09, "gdp": 6800, "pop": 52.0, "temp": 14, "lat": 1, "host": 0, "wc": 1, "ppg": 2.0, "tr": 1}, {"t": "Senegal", "fifa": 1688.99, "gdp": 1700, "pop": 18.0, "temp": 25, "lat": 0, "host": 0, "wc": 1, "ppg": 2.0, "tr": 0}, {"t": "Mexico", "fifa": 1681.03, "gdp": 13000, "pop": 128.0, "temp": 16, "lat": 1, "host": 1, "wc": 1, "ppg": 2.2, "tr": 1}, {"t": "United States", "fifa": 1673.13, "gdp": 82000, "pop": 335.0, "temp": 14, "lat": 0, "host": 1, "wc": 1, "ppg": 1.8, "tr": 0}, {"t": "Uruguay", "fifa": 1673.07, "gdp": 21000, "pop": 3.4, "temp": 17, "lat": 1, "host": 0, "wc": 1, "ppg": 1.8, "tr": -1}, {"t": "Japan", "fifa": 1660.43, "gdp": 33000, "pop": 124.0, "temp": 16, "lat": 0, "host": 0, "wc": 1, "ppg": 2.2, "tr": 1}, {"t": "Switzerland", "fifa": 1649.4, "gdp": 99000, "pop": 8.8, "temp": 9, "lat": 0, "host": 0, "wc": 1, "ppg": 1.8, "tr": 0}, {"t": "Korea Republic", "fifa": 1575.0, "gdp": 35000, "pop": 52.0, "temp": 13, "lat": 0, "host": 0, "wc": 1, "ppg": 1.8, "tr": 0}, {"t": "Ecuador", "fifa": 1570.0, "gdp": 6500, "pop": 18.0, "temp": 14, "lat": 1, "host": 0, "wc": 1, "ppg": 2.0, "tr": 1}, {"t": "Austria", "fifa": 1560.0, "gdp": 56000, "pop": 9.1, "temp": 11, "lat": 0, "host": 0, "wc": 1, "ppg": 2.0, "tr": 0}, {"t": "Norway", "fifa": 1540.0, "gdp": 87000, "pop": 5.5, "temp": 6, "lat": 0, "host": 0, "wc": 1, "ppg": 2.2, "tr": 1}, {"t": "Canada", "fifa": 1538.0, "gdp": 54000, "pop": 40.0, "temp": 6, "lat": 0, "host": 1, "wc": 1, "ppg": 1.6, "tr": 0}, {"t": "Turkiye", "fifa": 1530.0, "gdp": 13000, "pop": 85.0, "temp": 12, "lat": 0, "host": 0, "wc": 1, "ppg": 1.8, "tr": 1}, {"t": "Sweden", "fifa": 1528.0, "gdp": 56000, "pop": 10.5, "temp": 7, "lat": 0, "host": 0, "wc": 1, "ppg": 1.6, "tr": 0}, {"t": "Australia", "fifa": 1500.0, "gdp": 65000, "pop": 26.0, "temp": 13, "lat": 0, "host": 0, "wc": 1, "ppg": 1.6, "tr": 0}, {"t": "Scotland", "fifa": 1498.0, "gdp": 49000, "pop": 5.5, "temp": 9, "lat": 0, "host": 0, "wc": 1, "ppg": 1.6, "tr": 0}, {"t": "Ivory Coast", "fifa": 1495.0, "gdp": 2700, "pop": 28.0, "temp": 27, "lat": 0, "host": 0, "wc": 1, "ppg": 1.8, "tr": 1}, {"t": "Egypt", "fifa": 1492.0, "gdp": 3500, "pop": 112.0, "temp": 22, "lat": 0, "host": 0, "wc": 1, "ppg": 1.8, "tr": 0}, {"t": "Czechia", "fifa": 1490.0, "gdp": 31000, "pop": 10.7, "temp": 9, "lat": 0, "host": 0, "wc": 1, "ppg": 1.6, "tr": 0}, {"t": "Algeria", "fifa": 1488.0, "gdp": 5000, "pop": 45.0, "temp": 18, "lat": 0, "host": 0, "wc": 1, "ppg": 1.8, "tr": 0}, {"t": "Paraguay", "fifa": 1480.0, "gdp": 6200, "pop": 6.9, "temp": 23, "lat": 1, "host": 0, "wc": 1, "ppg": 1.6, "tr": 0}, {"t": "Iran", "fifa": 1478.0, "gdp": 4500, "pop": 89.0, "temp": 17, "lat": 0, "host": 0, "wc": 1, "ppg": 1.6, "tr": 0}, {"t": "Bosnia and Herzegovina", "fifa": 1470.0, "gdp": 8000, "pop": 3.2, "temp": 10, "lat": 0, "host": 0, "wc": 1, "ppg": 1.4, "tr": 0}, {"t": "Panama", "fifa": 1465.0, "gdp": 18000, "pop": 4.4, "temp": 27, "lat": 1, "host": 0, "wc": 1, "ppg": 1.4, "tr": 0}, {"t": "Ghana", "fifa": 1450.0, "gdp": 2400, "pop": 34.0, "temp": 27, "lat": 0, "host": 0, "wc": 1, "ppg": 1.4, "tr": 0}, {"t": "Saudi Arabia", "fifa": 1420.0, "gdp": 33000, "pop": 36.0, "temp": 26, "lat": 0, "host": 0, "wc": 1, "ppg": 1.4, "tr": 0}, {"t": "Qatar", "fifa": 1415.0, "gdp": 80000, "pop": 2.7, "temp": 27, "lat": 0, "host": 0, "wc": 1, "ppg": 1.4, "tr": 0}, {"t": "South Africa", "fifa": 1410.0, "gdp": 6200, "pop": 60.0, "temp": 17, "lat": 0, "host": 0, "wc": 1, "ppg": 1.6, "tr": 1}, {"t": "Uzbekistan", "fifa": 1405.0, "gdp": 2500, "pop": 35.0, "temp": 14, "lat": 0, "host": 0, "wc": 1, "ppg": 1.6, "tr": 1}, {"t": "Jordan", "fifa": 1390.0, "gdp": 4300, "pop": 11.0, "temp": 18, "lat": 0, "host": 0, "wc": 1, "ppg": 1.4, "tr": 0}, {"t": "Cape Verde", "fifa": 1385.0, "gdp": 4300, "pop": 0.6, "temp": 24, "lat": 1, "host": 0, "wc": 1, "ppg": 1.6, "tr": 1}, {"t": "New Zealand", "fifa": 1310.0, "gdp": 48000, "pop": 5.2, "temp": 13, "lat": 0, "host": 0, "wc": 1, "ppg": 1.4, "tr": 0}, {"t": "Haiti", "fifa": 1300.0, "gdp": 1700, "pop": 11.5, "temp": 27, "lat": 1, "host": 0, "wc": 1, "ppg": 1.2, "tr": 0}, {"t": "Curacao", "fifa": 1290.0, "gdp": 18000, "pop": 0.15, "temp": 28, "lat": 1, "host": 0, "wc": 1, "ppg": 1.2, "tr": 0}, {"t": "DR Congo", "fifa": 1465.0, "gdp": 650, "pop": 102.0, "temp": 25, "lat": 0, "host": 0, "wc": 1, "ppg": 1.8, "tr": 1}, {"t": "Tunisia", "fifa": 1470.0, "gdp": 3900, "pop": 12.0, "temp": 19, "lat": 0, "host": 0, "wc": 1, "ppg": 1.8, "tr": 0}, {"t": "Iraq", "fifa": 1380.0, "gdp": 5000, "pop": 46.0, "temp": 23, "lat": 0, "host": 0, "wc": 1, "ppg": 1.6, "tr": 1}];
+const H2H=[{"a": "Argentina", "b": "Brazil", "aw": 42, "d": 26, "bw": 43}, {"a": "Brazil", "b": "Germany", "aw": 5, "d": 1, "bw": 2}, {"a": "Germany", "b": "Netherlands", "aw": 16, "d": 16, "bw": 11}, {"a": "Spain", "b": "Portugal", "aw": 16, "d": 6, "bw": 6}, {"a": "France", "b": "Germany", "aw": 14, "d": 8, "bw": 11}, {"a": "England", "b": "Argentina", "aw": 3, "d": 1, "bw": 3}, {"a": "Argentina", "b": "Netherlands", "aw": 5, "d": 4, "bw": 1}, {"a": "Brazil", "b": "France", "aw": 1, "d": 2, "bw": 4}, {"a": "Spain", "b": "Netherlands", "aw": 4, "d": 1, "bw": 3}, {"a": "France", "b": "Portugal", "aw": 19, "d": 3, "bw": 6}, {"a": "Mexico", "b": "United States", "aw": 36, "d": 15, "bw": 23}, {"a": "Argentina", "b": "Mexico", "aw": 16, "d": 3, "bw": 4}, {"a": "Netherlands", "b": "Japan", "aw": 2, "d": 1, "bw": 0}, {"a": "Colombia", "b": "Argentina", "aw": 9, "d": 11, "bw": 26}, {"a": "Brazil", "b": "Morocco", "aw": 1, "d": 1, "bw": 1}];
+const R1={France:{gf:3,ga:1,pts:3},Spain:{gf:0,ga:0,pts:1},Argentina:{gf:3,ga:0,pts:3},England:{gf:4,ga:2,pts:3},Portugal:{gf:1,ga:1,pts:1},Brazil:{gf:1,ga:1,pts:1},Netherlands:{gf:2,ga:2,pts:1},Morocco:{gf:1,ga:1,pts:1},Belgium:{gf:1,ga:1,pts:1},Germany:{gf:7,ga:1,pts:3},Croatia:{gf:2,ga:4,pts:0},Colombia:{gf:3,ga:1,pts:3},Senegal:{gf:1,ga:3,pts:0},Mexico:{gf:2,ga:0,pts:3},"United States":{gf:4,ga:1,pts:3},Uruguay:{gf:1,ga:1,pts:1},Japan:{gf:2,ga:2,pts:1},Switzerland:{gf:1,ga:1,pts:1},"Korea Republic":{gf:2,ga:1,pts:3},Ecuador:{gf:0,ga:1,pts:0},Austria:{gf:3,ga:1,pts:3},Norway:{gf:4,ga:1,pts:3},Canada:{gf:1,ga:1,pts:1},Turkiye:{gf:0,ga:2,pts:0},Sweden:{gf:5,ga:1,pts:3},Australia:{gf:2,ga:0,pts:3},Scotland:{gf:1,ga:0,pts:3},"Ivory Coast":{gf:1,ga:0,pts:3},Egypt:{gf:1,ga:1,pts:1},Czechia:{gf:1,ga:2,pts:0},Algeria:{gf:0,ga:3,pts:0},Paraguay:{gf:1,ga:4,pts:0},Iran:{gf:2,ga:2,pts:1},"Bosnia and Herzegovina":{gf:1,ga:1,pts:1},Panama:{gf:0,ga:1,pts:0},Ghana:{gf:1,ga:0,pts:3},"Saudi Arabia":{gf:1,ga:1,pts:1},Qatar:{gf:1,ga:1,pts:1},"South Africa":{gf:0,ga:2,pts:0},Uzbekistan:{gf:1,ga:3,pts:0},Jordan:{gf:1,ga:3,pts:0},"Cape Verde":{gf:0,ga:0,pts:1},"New Zealand":{gf:2,ga:2,pts:1},Haiti:{gf:0,ga:1,pts:0},Curacao:{gf:1,ga:7,pts:0},"DR Congo":{gf:1,ga:1,pts:1},Tunisia:{gf:1,ga:5,pts:0},Iraq:{gf:1,ga:4,pts:0}};
+
+const ES={"France": "Francia", "Spain": "España", "Argentina": "Argentina", "England": "Inglaterra", "Portugal": "Portugal", "Brazil": "Brasil", "Netherlands": "Países Bajos", "Morocco": "Marruecos", "Belgium": "Bélgica", "Germany": "Alemania", "Croatia": "Croacia", "Colombia": "Colombia", "Senegal": "Senegal", "Mexico": "México", "United States": "Estados Unidos", "Uruguay": "Uruguay", "Japan": "Japón", "Switzerland": "Suiza", "Korea Republic": "Corea del Sur", "Ecuador": "Ecuador", "Austria": "Austria", "Norway": "Noruega", "Canada": "Canadá", "Turkiye": "Turquía", "Sweden": "Suecia", "Australia": "Australia", "Scotland": "Escocia", "Ivory Coast": "Costa de Marfil", "Egypt": "Egipto", "Czechia": "Chequia", "Algeria": "Argelia", "Paraguay": "Paraguay", "Iran": "Irán", "Bosnia and Herzegovina": "Bosnia", "Panama": "Panamá", "Ghana": "Ghana", "Saudi Arabia": "Arabia Saudita", "Qatar": "Catar", "South Africa": "Sudáfrica", "Uzbekistan": "Uzbekistán", "Jordan": "Jordania", "Cape Verde": "Cabo Verde", "New Zealand": "Nueva Zelanda", "Haiti": "Haití", "Curacao": "Curazao", "DR Congo": "RD Congo", "Tunisia": "Túnez", "Iraq": "Irak"};
+const TRAITS={
+"France":{e:"su plantilla profundísima con Mbappé",t:"tiene gol para ganarle a cualquiera"},
+"Spain":{e:"su fútbol de posesión y una generación de oro (Yamal, Pedri)",t:"controla el balón y asfixia al rival"},
+"Argentina":{e:"su jerarquía de campeona y la magia de Messi",t:"tiene oficio y mentalidad ganadora"},
+"England":{e:"su talento ofensivo (Bellingham, Kane, Saka)",t:"tiene individualidades que deciden"},
+"Portugal":{e:"su jerarquía y relevo de lujo (Bruno, Leão)",t:"tiene fondo de armario para hacer daño"},
+"Brazil":{e:"su talento individual de pentacampeona",t:"siempre guarda un destello que define"},
+"Netherlands":{e:"su calidad y físico (Koeman, 4-2-3-1)",t:"tiene oficio de semifinalista"},
+"Morocco":{e:"su bloque compacto y veloz (Hakimi)",t:"corre y aprieta como la semifinalista que es"},
+"Belgium":{e:"su calidad individual aún notable",t:"tiene nombres para sorprender"},
+"Germany":{e:"su calidad y profundidad (Wirtz, Musiala)",t:"tiene plantel para golear"},
+"Croatia":{e:"su mediocampo de élite (Modrić)",t:"maneja los tiempos como pocos"},
+"Colombia":{e:"su buen momento y a James",t:"tiene talento para complicar a cualquiera"},
+"Senegal":{e:"su físico y talento de potencia africana",t:"impone físico y velocidad"},
+"Mexico":{e:"su empuje y el aliento local",t:"se crece como anfitriona"},
+"United States":{e:"su juventud europeizada (Pulisic) y el factor local",t:"corre y presiona en casa"},
+"Uruguay":{e:"su ADN competitivo y juventud (Núñez, Valverde)",t:"no regala un solo partido"},
+"Japan":{e:"su pressing y pegada de matagigantes",t:"castiga al que la subestima"},
+"Switzerland":{e:"su orden y solidez",t:"incomoda a las grandes"},
+"Korea Republic":{e:"su intensidad y a Son",t:"corre los 90 minutos y aprovecha cualquier error"},
+"Ecuador":{e:"su defensa hermética (Caicedo, Pacho)",t:"es dificilísima de batir y roba empates"},
+"Austria":{e:"su físico y orden colectivo",t:"es intensa y disciplinada"},
+"Norway":{e:"su dupla Haaland–Ødegaard",t:"tiene dos cracks que deciden solos"},
+"Canada":{e:"su velocidad (Davies, David)",t:"lastima al espacio"},
+"Turkiye":{e:"el talento de su generación joven (Güler, Yıldız)",t:"tiene calidad para sorprender"},
+"Sweden":{e:"su pegada arriba (Isak, Gyökeres)",t:"tiene gol para ganar cualquier duelo"},
+"Australia":{e:"su físico, orden y experiencia",t:"es incómoda y no se entrega"},
+"Scotland":{e:"su intensidad y entrega",t:"pelea cada balón"},
+"Ivory Coast":{e:"su talento europeo y solidez (Amad Diallo, Kessié)",t:"es física y aprieta hasta el final"},
+"Egypt":{e:"su figura Mohamed Salah",t:"con Salah inspirado hace daño"},
+"Czechia":{e:"su orden y disciplina",t:"aguanta atrás y golpea"},
+"Algeria":{e:"su talento técnico (Mahrez)",t:"tiene buen pie para sorprender"},
+"Paraguay":{e:"su solidez defensiva y contragolpe",t:"se cierra y golpea de contra"},
+"Iran":{e:"su físico y orden",t:"es difícil de doblegar"},
+"Bosnia and Herzegovina":{e:"su garra y un goleador de referencia",t:"juega con corazón y pelea"},
+"Panama":{e:"su carácter combativo",t:"es aguerrida e incómoda"},
+"Ghana":{e:"su talento disperso por Europa",t:"tiene jugadores para un destello"},
+"Saudi Arabia":{e:"su orden y orgullo",t:"ya dio una campanada y puede repetir"},
+"Qatar":{e:"su generación conjuntada",t:"se conoce de memoria"},
+"South Africa":{e:"su juventud y velocidad",t:"corre y sorprende"},
+"Uzbekistan":{e:"su generación dorada bien trabajada",t:"llega conjuntada y ambiciosa"},
+"Jordan":{e:"su bloque ordenado (finalista de Asia 2024)",t:"defiende bien y aprovecha su chance"},
+"Cape Verde":{e:"su solidaridad y energía",t:"se entrega como nadie"},
+"New Zealand":{e:"su físico y entrega",t:"pelea pese a la brecha de nivel"},
+"Haiti":{e:"su talento disperso e ilusión",t:"tiene chispa individual"},
+"Curacao":{e:"su unión y orden de equipo",t:"compite con todo pese a la brecha"},
+"Tunisia":{e:"su muralla defensiva",t:"defiende como pocos y puede robar un empate"},
+"Iraq":{e:"su bloque ordenado",t:"se cierra bien atrás"},
+"DR Congo":{e:"su físico y talento (Wissa, Bakambu)",t:"tiene físico para incomodar"}
+};
+const CFG={w_fifa:.55,w_klement:.25,w_form:.25,k_gdp:1,k_gdp_concavity:.06,k_pop:.55,
+latin_pop_gate:1,nonlatin_pop_gate:.40,k_temp:.04,host_bonus:.60,base_total_goals:2.85,
+goals_per_rating:.78,home_adv_goals:.25,form_to_rating:.18,trend_bonus:.06,k_h2h_goals:.30,
+max_goals:9,min_lambda:.30,form_smooth_alpha:.30,ad_shrink:.30,ad_cap_lo:.65,ad_cap_hi:1.60};
+const norm=s=>s.normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+const sstd=a=>{const m=a.reduce((x,y)=>x+y,0)/a.length;const v=a.reduce((x,y)=>x+(y-m)**2,0)/(a.length-1);return[m,Math.sqrt(v)];};
+const zarr=a=>{const[m,s]=sstd(a);return a.map(x=>(x-m)/s);};
+function buildRatings(){
+  const g=TEAMS.map(t=>Math.log(Math.max(t.gdp,300)));
+  const gdp=g.map(x=>CFG.k_gdp*(x-CFG.k_gdp_concavity*x*x));
+  const pop=TEAMS.map(t=>{const p=Math.log(Math.max(t.pop,0.05)*1e6);const gate=t.lat?CFG.latin_pop_gate:CFG.nonlatin_pop_gate;return CFG.k_pop*p*gate;});
+  const temp=TEAMS.map(t=>-CFG.k_temp*(t.temp-14)**2);
+  const host=TEAMS.map(t=>CFG.host_bonus*t.host);
+  const raw=TEAMS.map((_,i)=>gdp[i]+pop[i]+temp[i]+host[i]);
+  const zk=zarr(raw), zf=zarr(TEAMS.map(t=>t.fifa));
+  // v2: smooth form with real round-1 results + data-driven attack/defense
+  let s=0,n=0;for(const t of TEAMS){const r=R1[t.t];if(r){s+=r.gf;n++;}}const mu=n?s/n:1.5;
+  const clamp=x=>Math.min(CFG.ad_cap_hi,Math.max(CFG.ad_cap_lo,x));
+  const ppgS=TEAMS.map(t=>{const r=R1[t.t];return r?(1-CFG.form_smooth_alpha)*t.ppg+CFG.form_smooth_alpha*r.pts:t.ppg;});
+  const att=TEAMS.map(t=>{const r=R1[t.t];return r?clamp(CFG.ad_shrink*(r.gf/mu)+(1-CFG.ad_shrink)):1;});
+  const def=TEAMS.map(t=>{const r=R1[t.t];return r?clamp(CFG.ad_shrink*(r.ga/mu)+(1-CFG.ad_shrink)):1;});
+  const zfo=zarr(TEAMS.map((t,i)=>(ppgS[i]-1.6)*CFG.form_to_rating+t.tr*CFG.trend_bonus));
+  const wsum=CFG.w_fifa+CFG.w_klement+CFG.w_form;
+  return TEAMS.map((t,i)=>({...t,ppgS:ppgS[i],attack:att[i],defense:def[i],rating:(CFG.w_fifa*zf[i]+CFG.w_klement*zk[i]+CFG.w_form*zfo[i])/wsum}));
+}
+function h2h(a,b){const ka=norm(a),kb=norm(b);for(const r of H2H){const ta=norm(r.a),tb=norm(r.b);
+  if((ta===ka&&tb===kb)||(ta===kb&&tb===ka)){let aw,bw;if(ta===ka){aw=r.aw;bw=r.bw;}else{aw=r.bw;bw=r.aw;}
+  const tot=aw+r.d+bw;if(!tot)return[0,null];return[CFG.k_h2h_goals*((aw/tot)-.5)*2,[aw,r.d,bw]];}}return[0,null];}
+const fact=n=>{let r=1;for(let i=2;i<=n;i++)r*=i;return r;};
+function recommend(A,B,pa,pd,pb,la,lb){
+  const na=ES[A.t]||A.t, nb=ES[B.t]||B.t;
+  const fav=pa>=pb?na:nb, favp=Math.max(pa,pb), total=la+lb;
+  const conf=favp>=.62?"Alta":favp>=.45?"Media":"Baja (abierto)";
+  let pick;
+  if(pd>=Math.max(pa,pb)) pick=`Empate muy vivo — ${na} y ${nb} parejos`;
+  else if((favp-pd)<.12||favp<.45) pick=`Ligera ventaja ${fav}, pero abierto`;
+  else pick=`Gana ${fav}`;
+  const goals=total>=3.0?`Over 2.5 · partido de goles (~${total.toFixed(1)})`:total<=2.2?`Under 2.5 · cerrado (~${total.toFixed(1)})`:`En la raya de 2.5 (~${total.toFixed(1)})`;
+  const risks=[];
+  if(favp>=.65) risks.push("favorito claro, pero esta Copa muerde favoritos");
+  if(pd>=.26) risks.push("empate con probabilidad real");
+  return{pick,conf,goals,risk:risks.length?risks.join(" · "):"sin alertas especiales"};
+}
+function predict(A,B,knockout){
+  let[sup,rec]=h2h(A.t,B.t);sup+=CFG.goals_per_rating*(A.rating-B.rating);
+  const baseA=(CFG.base_total_goals+sup)/2+CFG.home_adv_goals*A.host;
+  const baseB=(CFG.base_total_goals-sup)/2+CFG.home_adv_goals*B.host;
+  let la=Math.max(baseA*(A.attack||1)*(B.defense||1),CFG.min_lambda);
+  let lb=Math.max(baseB*(B.attack||1)*(A.defense||1),CFG.min_lambda);
+  const n=CFG.max_goals,pa=[],pb=[];
+  for(let i=0;i<=n;i++){pa.push(Math.exp(-la)*la**i/fact(i));pb.push(Math.exp(-lb)*lb**i/fact(i));}
+  let pA=0,pD=0,pB=0,tot=0,M=[];
+  for(let i=0;i<=n;i++){M[i]=[];for(let j=0;j<=n;j++){const v=pa[i]*pb[j];M[i][j]=v;tot+=v;}}
+  const cells=[];
+  for(let i=0;i<=n;i++)for(let j=0;j<=n;j++){const v=M[i][j]/tot;if(i>j)pA+=v;else if(i===j)pD+=v;else pB+=v;cells.push([i,j,v]);}
+  cells.sort((x,y)=>y[2]-x[2]);
+  const top=cells.slice(0,3);
+  const bi=top[0][0], bj=top[0][1];
+  let adv=null;if(knockout){const e=.5+.5*Math.tanh(A.rating-B.rating);adv=[pA+pD*e,pB+pD*(1-e)];}
+  return{la,lb,pA,pD,pB,bi,bj,top,rec,adv,recom:recommend(A,B,pA,pD,pB,la,lb)};
+}
+const name=t=>ES[t.t]||t.t;
+// populate dropdowns (WC teams only), sorted by Spanish name
+const opts=TEAMS.filter(t=>t.wc).sort((x,y)=>name(x).localeCompare(name(y),'es'));
+const ta=document.getElementById('ta'),tb=document.getElementById('tb');
+for(const t of opts){const o1=new Option(name(t),t.t),o2=new Option(name(t),t.t);ta.add(o1);tb.add(o2);}
+ta.value="Colombia";tb.value="Portugal";
+// weight sliders
+const wf=document.getElementById('wf'),wk=document.getElementById('wk'),wo=document.getElementById('wo');
+const of=document.getElementById('of'),ok=document.getElementById('ok'),oo=document.getElementById('oo');
+function syncW(){const s=(+wf.value+ +wk.value+ +wo.value)||1;
+  CFG.w_fifa=wf.value/s;CFG.w_klement=wk.value/s;CFG.w_form=wo.value/s;
+  of.textContent=CFG.w_fifa.toFixed(2).slice(1);ok.textContent=CFG.w_klement.toFixed(2).slice(1);oo.textContent=CFG.w_form.toFixed(2).slice(1);}
+[wf,wk,wo].forEach(s=>s.addEventListener('input',()=>{syncW();if(lastRun)run();}));
+let lastRun=false;
+function run(){
+  lastRun=true;
+  const R=buildRatings();
+  const A=R.find(t=>t.t===ta.value),B=R.find(t=>t.t===tb.value);
+  if(A.t===B.t){document.getElementById('result').innerHTML='<div class="empty">Elige dos selecciones distintas.</div>';return;}
+  const ko=document.getElementById('ko').checked;
+  const p=predict(A,B,ko);
+  const pa=Math.round(p.pA*100),pd=Math.round(p.pD*100),pb=Math.round(p.pB*100);
+  let h2hTxt='Sin enfrentamientos previos';
+  if(p.rec){h2hTxt=p.rec[0]+'V · '+p.rec[1]+'E · '+p.rec[2]+'D <span style="color:var(--dim)">(vista '+name(A)+')</span>';}
+  const advHtml=p.adv?'<div class="adv">Clasifica: '+name(A)+' '+Math.round(p.adv[0]*100)+'% · '+name(B)+' '+Math.round(p.adv[1]*100)+'%</div>':'';
+  // ---- la lectura: justifica la inclinación (sin tecnicismos) ----
+  const fav = pa>=pb ? A : B, und = pa>=pb ? B : A;
+  const F = name(fav), U = name(und), gap = Math.abs(pa-pb);
+  const TF = TRAITS[fav.t]||{e:"su nivel",t:"compite de igual a igual"};
+  const TU = TRAITS[und.t]||{e:"su nivel",t:"compite de igual a igual"};
+  let just;
+  if(pd>=pa && pd>=pb) just = `Partido muy parejo, con el empate como lo más probable: ${F} aporta ${TF.e}, pero ${U} ${TU.t}.`;
+  else if(gap>=30)     just = `El favoritismo cae claramente del lado de ${F} por ${TF.e}; una diferencia que ${U} difícilmente recorta.`;
+  else if(gap>=12)     just = `${F} parte con ventaja por ${TF.e}; ojo con ${U}, que ${TU.t}.`;
+  else if(gap>=4)      just = `Ligera ventaja para ${F} por ${TF.e}, aunque ${U} ${TU.t}.`;
+  else                 just = `Muy parejo: la balanza se inclina apenas hacia ${F} por ${TF.e}, frente a ${U}, que ${TU.t}.`;
+  const fA=(document.getElementById('fmA').value||'').trim(), fB=(document.getElementById('fmB').value||'').trim();
+  let formaLine='';
+  if(fA||fB){formaLine=`<p class="forma"><b>Forma del día —</b> `+
+    [fA?`${name(A)}: ${fA}`:'', fB?`${name(B)}: ${fB}`:''].filter(Boolean).join(' · ')+`</p>`;}
+  const readHtml = `<div class="read">
+      <div class="readhead">📋 La lectura · por qué se inclina así</div>
+      <p class="just">${just}</p>
+      ${formaLine}
+      <p class="dis">Lectura orientativa de pedigrí y estilo — una inclinación, no una certeza (~45% de un partido es azar). La forma del día la añades tú o la consultas en el chat.</p>
+    </div>`;
+  const podium = p.top.map((t,idx)=>`<div class="ps${idx===0?' top':''}"><span class="sc">${t[0]}<i>–</i>${t[1]}</span><span class="pc">${Math.round(t[2]*100)}%</span></div>`).join('');
+  const rc=p.recom;
+  const recHtml=`<div class="reco">
+      <div class="recohead">🎯 Recomendación</div>
+      <div class="recorow"><span class="rk">Pick</span><span class="rv">${rc.pick}</span></div>
+      <div class="recorow"><span class="rk">Confianza</span><span class="rv">${rc.conf}</span></div>
+      <div class="recorow"><span class="rk">Goles</span><span class="rv">${rc.goals}</span></div>
+      <div class="recorow"><span class="rk">Riesgo</span><span class="rv">${rc.risk}</span></div>
+    </div>`;
+  document.getElementById('result').innerHTML=`
+    <div class="board">
+      <div class="bteams">
+        <div class="bteam r">${name(A)}</div><div class="vsmid">vs</div><div class="bteam r">${name(B)}</div>
+      </div>
+      <div class="xgline">Goles esperados <b>${p.la.toFixed(1)} – ${p.lb.toFixed(1)}</b></div>
+      <div class="podium">${podium}</div>
+      <div class="podlabel">LOS 3 MARCADORES MÁS PROBABLES · NINGUNO ES SEGURO POR SÍ SOLO</div>
+    </div>
+    <div class="barwrap">
+      <div class="bar">
+        <div class="seg a" style="width:0%">${pa>9?pa+'%':''}</div>
+        <div class="seg d" style="width:0%">${pd>9?pd+'%':''}</div>
+        <div class="seg b" style="width:0%">${pb>9?pb+'%':''}</div>
+      </div>
+      <div class="barlabels"><span>Gana <b>${name(A)}</b> ${pa}%</span><span>Empate ${pd}%</span><span>Gana <b>${name(B)}</b> ${pb}%</span></div>
+    </div>
+    ${recHtml}
+    <div class="meta">
+      <div class="cell"><div class="k">Rating compuesto</div><div class="v">${A.rating>=0?'+':''}${A.rating.toFixed(2)} · ${B.rating>=0?'+':''}${B.rating.toFixed(2)}</div></div>
+      <div class="cell"><div class="k">Ataque / Defensa (1.0 = prom.)</div><div class="v">${name(A)} ${A.attack.toFixed(2)}/${A.defense.toFixed(2)} · ${name(B)} ${B.attack.toFixed(2)}/${B.defense.toFixed(2)}</div></div>
+      <div class="cell" style="grid-column:1/-1"><div class="k">Head-to-head</div><div class="v">${h2hTxt}</div></div>
+    </div>${advHtml}${readHtml}`;
+  requestAnimationFrame(()=>{const segs=document.querySelectorAll('.seg');
+    segs[0].style.width=pa+'%';segs[1].style.width=pd+'%';segs[2].style.width=pb+'%';});
+}
+document.getElementById('go').addEventListener('click',run);
+[ta,tb].forEach(s=>s.addEventListener('change',()=>{if(lastRun)run();}));
+document.getElementById('ko').addEventListener('change',()=>{if(lastRun)run();});
+['fmA','fmB'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{if(lastRun)run();}));
+syncW();run();
+</script>
+</body>
+</html>
