@@ -132,8 +132,8 @@ input[type=range]::-webkit-slider-thumb{appearance:none; width:16px; height:16px
 <body>
 <div class="wrap">
   <div class="eyebrow">Modelo Klement · Capa cuantitativa</div>
-  <h1>Predictor <em>Mundial 2026</em> <span style="font-family:'Spline Sans Mono';font-size:13px;color:var(--gold);border:1px solid var(--gold);border-radius:6px;padding:2px 7px;vertical-align:middle;letter-spacing:.05em">v3</span></h1>
-  <p class="sub">v3 · refrescado con la <b>fecha 2 completa</b> (2 partidos por equipo): forma suavizada secuencial, ataque/defensa de 2 juegos y recomendación. Modelo Klement (FIFA · PIB · población · clima · sede). Elige dos selecciones.</p>
+  <h1>Predictor <em>Mundial 2026</em> <span style="font-family:'Spline Sans Mono';font-size:13px;color:var(--gold);border:1px solid var(--gold);border-radius:6px;padding:2px 7px;vertical-align:middle;letter-spacing:.05em">v4</span></h1>
+  <p class="sub">v4 · eliminatorias: las <b>3 fechas</b> de grupos con la <b>fecha 3 ponderada a la baja</b> (rotaciones), prórroga/penales y <b>probabilidad de avance</b> como métrica principal. Modelo Klement (FIFA · PIB · población · clima · sede). Activa "Eliminación directa" para los cruces.</p>
 
   <div class="card">
     <div class="selectors">
@@ -175,6 +175,7 @@ const TEAMS=[{"t": "France", "fifa": 1877.32, "gdp": 46000, "pop": 65.0, "temp":
 const H2H=[{"a": "Argentina", "b": "Brazil", "aw": 42, "d": 26, "bw": 43}, {"a": "Brazil", "b": "Germany", "aw": 5, "d": 1, "bw": 2}, {"a": "Germany", "b": "Netherlands", "aw": 16, "d": 16, "bw": 11}, {"a": "Spain", "b": "Portugal", "aw": 16, "d": 6, "bw": 6}, {"a": "France", "b": "Germany", "aw": 14, "d": 8, "bw": 11}, {"a": "England", "b": "Argentina", "aw": 3, "d": 1, "bw": 3}, {"a": "Argentina", "b": "Netherlands", "aw": 5, "d": 4, "bw": 1}, {"a": "Brazil", "b": "France", "aw": 1, "d": 2, "bw": 4}, {"a": "Spain", "b": "Netherlands", "aw": 4, "d": 1, "bw": 3}, {"a": "France", "b": "Portugal", "aw": 19, "d": 3, "bw": 6}, {"a": "Mexico", "b": "United States", "aw": 36, "d": 15, "bw": 23}, {"a": "Argentina", "b": "Mexico", "aw": 16, "d": 3, "bw": 4}, {"a": "Netherlands", "b": "Japan", "aw": 2, "d": 1, "bw": 0}, {"a": "Colombia", "b": "Argentina", "aw": 9, "d": 11, "bw": 26}, {"a": "Brazil", "b": "Morocco", "aw": 1, "d": 1, "bw": 1}];
 const R1={France:{gf:3,ga:1,pts:3},Spain:{gf:0,ga:0,pts:1},Argentina:{gf:3,ga:0,pts:3},England:{gf:4,ga:2,pts:3},Portugal:{gf:1,ga:1,pts:1},Brazil:{gf:1,ga:1,pts:1},Netherlands:{gf:2,ga:2,pts:1},Morocco:{gf:1,ga:1,pts:1},Belgium:{gf:1,ga:1,pts:1},Germany:{gf:7,ga:1,pts:3},Croatia:{gf:2,ga:4,pts:0},Colombia:{gf:3,ga:1,pts:3},Senegal:{gf:1,ga:3,pts:0},Mexico:{gf:2,ga:0,pts:3},"United States":{gf:4,ga:1,pts:3},Uruguay:{gf:1,ga:1,pts:1},Japan:{gf:2,ga:2,pts:1},Switzerland:{gf:1,ga:1,pts:1},"Korea Republic":{gf:2,ga:1,pts:3},Ecuador:{gf:0,ga:1,pts:0},Austria:{gf:3,ga:1,pts:3},Norway:{gf:4,ga:1,pts:3},Canada:{gf:1,ga:1,pts:1},Turkiye:{gf:0,ga:2,pts:0},Sweden:{gf:5,ga:1,pts:3},Australia:{gf:2,ga:0,pts:3},Scotland:{gf:1,ga:0,pts:3},"Ivory Coast":{gf:1,ga:0,pts:3},Egypt:{gf:1,ga:1,pts:1},Czechia:{gf:1,ga:2,pts:0},Algeria:{gf:0,ga:3,pts:0},Paraguay:{gf:1,ga:4,pts:0},Iran:{gf:2,ga:2,pts:1},"Bosnia and Herzegovina":{gf:1,ga:1,pts:1},Panama:{gf:0,ga:1,pts:0},Ghana:{gf:1,ga:0,pts:3},"Saudi Arabia":{gf:1,ga:1,pts:1},Qatar:{gf:1,ga:1,pts:1},"South Africa":{gf:0,ga:2,pts:0},Uzbekistan:{gf:1,ga:3,pts:0},Jordan:{gf:1,ga:3,pts:0},"Cape Verde":{gf:0,ga:0,pts:1},"New Zealand":{gf:2,ga:2,pts:1},Haiti:{gf:0,ga:1,pts:0},Curacao:{gf:1,ga:7,pts:0},"DR Congo":{gf:1,ga:1,pts:1},Tunisia:{gf:1,ga:5,pts:0},Iraq:{gf:1,ga:4,pts:0}};
 const R2={"South Africa":{gf:1,ga:1,pts:1},Czechia:{gf:1,ga:1,pts:1},Mexico:{gf:1,ga:0,pts:3},"Korea Republic":{gf:0,ga:1,pts:0},Switzerland:{gf:4,ga:1,pts:3},"Bosnia and Herzegovina":{gf:1,ga:4,pts:0},Canada:{gf:6,ga:0,pts:3},Qatar:{gf:0,ga:6,pts:0},Scotland:{gf:0,ga:1,pts:0},Morocco:{gf:1,ga:0,pts:3},Brazil:{gf:3,ga:0,pts:3},Haiti:{gf:0,ga:3,pts:0},"United States":{gf:2,ga:0,pts:3},Australia:{gf:0,ga:2,pts:0},Turkiye:{gf:0,ga:1,pts:0},Paraguay:{gf:1,ga:0,pts:3},Germany:{gf:2,ga:1,pts:3},"Ivory Coast":{gf:1,ga:2,pts:0},Ecuador:{gf:0,ga:0,pts:1},Curacao:{gf:0,ga:0,pts:1},Netherlands:{gf:5,ga:1,pts:3},Sweden:{gf:1,ga:5,pts:0},Japan:{gf:4,ga:0,pts:3},Tunisia:{gf:0,ga:4,pts:0},Belgium:{gf:0,ga:0,pts:1},Iran:{gf:0,ga:0,pts:1},"New Zealand":{gf:1,ga:3,pts:0},Egypt:{gf:3,ga:1,pts:3},Spain:{gf:4,ga:0,pts:3},"Saudi Arabia":{gf:0,ga:4,pts:0},Uruguay:{gf:2,ga:2,pts:1},"Cape Verde":{gf:2,ga:2,pts:1},France:{gf:3,ga:0,pts:3},Iraq:{gf:0,ga:3,pts:0},Norway:{gf:3,ga:2,pts:3},Senegal:{gf:2,ga:3,pts:0},Argentina:{gf:2,ga:0,pts:3},Austria:{gf:0,ga:2,pts:0},Jordan:{gf:1,ga:2,pts:0},Algeria:{gf:2,ga:1,pts:3},Portugal:{gf:5,ga:0,pts:3},Uzbekistan:{gf:0,ga:5,pts:0},Colombia:{gf:1,ga:0,pts:3},"DR Congo":{gf:0,ga:1,pts:0},England:{gf:0,ga:0,pts:1},Ghana:{gf:0,ga:0,pts:1},Croatia:{gf:1,ga:0,pts:3},Panama:{gf:0,ga:1,pts:0}};
+const R3={"South Africa":{gf:1,ga:0,pts:3},Czechia:{gf:0,ga:3,pts:0},Mexico:{gf:3,ga:0,pts:3},"Korea Republic":{gf:0,ga:1,pts:0},Switzerland:{gf:3,ga:1,pts:3},"Bosnia and Herzegovina":{gf:3,ga:1,pts:3},Canada:{gf:1,ga:3,pts:0},Qatar:{gf:1,ga:3,pts:0},Scotland:{gf:0,ga:3,pts:0},Morocco:{gf:4,ga:2,pts:3},Brazil:{gf:3,ga:0,pts:3},Haiti:{gf:2,ga:4,pts:0},"United States":{gf:2,ga:3,pts:0},Australia:{gf:0,ga:0,pts:1},Turkiye:{gf:3,ga:2,pts:3},Paraguay:{gf:0,ga:0,pts:1},Germany:{gf:1,ga:2,pts:0},"Ivory Coast":{gf:2,ga:0,pts:3},Ecuador:{gf:2,ga:1,pts:3},Curacao:{gf:0,ga:2,pts:0},Netherlands:{gf:3,ga:1,pts:3},Sweden:{gf:1,ga:1,pts:1},Japan:{gf:1,ga:1,pts:1},Tunisia:{gf:1,ga:3,pts:0},Belgium:{gf:5,ga:1,pts:3},Iran:{gf:1,ga:1,pts:1},"New Zealand":{gf:1,ga:5,pts:0},Egypt:{gf:1,ga:1,pts:1},Spain:{gf:1,ga:0,pts:3},"Saudi Arabia":{gf:0,ga:0,pts:1},Uruguay:{gf:0,ga:1,pts:0},"Cape Verde":{gf:0,ga:0,pts:1},France:{gf:4,ga:1,pts:3},Iraq:{gf:0,ga:5,pts:0},Norway:{gf:1,ga:4,pts:0},Senegal:{gf:5,ga:0,pts:3},Argentina:{gf:3,ga:1,pts:3},Austria:{gf:3,ga:3,pts:1},Jordan:{gf:1,ga:3,pts:0},Algeria:{gf:3,ga:3,pts:1},Portugal:{gf:0,ga:0,pts:1},Uzbekistan:{gf:1,ga:3,pts:0},Colombia:{gf:0,ga:0,pts:1},"DR Congo":{gf:3,ga:1,pts:3},England:{gf:2,ga:0,pts:3},Ghana:{gf:1,ga:2,pts:0},Croatia:{gf:2,ga:1,pts:3},Panama:{gf:0,ga:2,pts:0}};
 
 const ES={"France": "Francia", "Spain": "España", "Argentina": "Argentina", "England": "Inglaterra", "Portugal": "Portugal", "Brazil": "Brasil", "Netherlands": "Países Bajos", "Morocco": "Marruecos", "Belgium": "Bélgica", "Germany": "Alemania", "Croatia": "Croacia", "Colombia": "Colombia", "Senegal": "Senegal", "Mexico": "México", "United States": "Estados Unidos", "Uruguay": "Uruguay", "Japan": "Japón", "Switzerland": "Suiza", "Korea Republic": "Corea del Sur", "Ecuador": "Ecuador", "Austria": "Austria", "Norway": "Noruega", "Canada": "Canadá", "Turkiye": "Turquía", "Sweden": "Suecia", "Australia": "Australia", "Scotland": "Escocia", "Ivory Coast": "Costa de Marfil", "Egypt": "Egipto", "Czechia": "Chequia", "Algeria": "Argelia", "Paraguay": "Paraguay", "Iran": "Irán", "Bosnia and Herzegovina": "Bosnia", "Panama": "Panamá", "Ghana": "Ghana", "Saudi Arabia": "Arabia Saudita", "Qatar": "Catar", "South Africa": "Sudáfrica", "Uzbekistan": "Uzbekistán", "Jordan": "Jordania", "Cape Verde": "Cabo Verde", "New Zealand": "Nueva Zelanda", "Haiti": "Haití", "Curacao": "Curazao", "DR Congo": "RD Congo", "Tunisia": "Túnez", "Iraq": "Irak"};
 const TRAITS={
@@ -230,7 +231,7 @@ const TRAITS={
 const CFG={w_fifa:.55,w_klement:.25,w_form:.25,k_gdp:1,k_gdp_concavity:.06,k_pop:.55,
 latin_pop_gate:1,nonlatin_pop_gate:.40,k_temp:.04,host_bonus:.60,base_total_goals:2.85,
 goals_per_rating:.78,home_adv_goals:.25,form_to_rating:.18,trend_bonus:.06,k_h2h_goals:.30,
-max_goals:9,min_lambda:.30,form_smooth_alpha:.30,ad_shrink:.42,ad_cap_lo:.65,ad_cap_hi:1.60};
+max_goals:9,min_lambda:.30,form_smooth_alpha:.30,ad_shrink:.42,ad_cap_lo:.65,ad_cap_hi:1.60,round_weights:[1,1,.5],r3_form_mult:.5};
 const norm=s=>s.normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
 const sstd=a=>{const m=a.reduce((x,y)=>x+y,0)/a.length;const v=a.reduce((x,y)=>x+(y-m)**2,0)/(a.length-1);return[m,Math.sqrt(v)];};
 const zarr=a=>{const[m,s]=sstd(a);return a.map(x=>(x-m)/s);};
@@ -242,17 +243,18 @@ function buildRatings(){
   const host=TEAMS.map(t=>CFG.host_bonus*t.host);
   const raw=TEAMS.map((_,i)=>gdp[i]+pop[i]+temp[i]+host[i]);
   const zk=zarr(raw), zf=zarr(TEAMS.map(t=>t.fifa));
-  // v3: smooth form over BOTH played rounds (sequential, recent weighted most)
-  // + attack/defense from 2-game averages
-  const a=CFG.form_smooth_alpha, s=CFG.ad_shrink;
+  // v4: smooth form over ALL 3 rounds + attack/defense from goals, with
+  // PER-ROUND WEIGHTS so matchday 3 (rotation/dead-rubbers) counts less.
+  const a=CFG.form_smooth_alpha, s=CFG.ad_shrink, rw=CFG.round_weights;
   const clamp=x=>Math.min(CFG.ad_cap_hi,Math.max(CFG.ad_cap_lo,x));
-  let allgf=[];TEAMS.forEach(t=>{[R1[t.t],R2[t.t]].forEach(r=>{if(r)allgf.push(r.gf);});});
+  let allgf=[];TEAMS.forEach(t=>{[R1[t.t],R2[t.t],R3[t.t]].forEach(r=>{if(r)allgf.push(r.gf);});});
   const mu=allgf.length?allgf.reduce((x,y)=>x+y,0)/allgf.length:1.5;
   const ppgS=[],att=[],def=[];
   TEAMS.forEach(t=>{
-    const rs=[R1[t.t],R2[t.t]].filter(Boolean);
-    let f=t.ppg; rs.forEach(r=>{f=(1-a)*f+a*r.pts;}); ppgS.push(f);
-    if(rs.length){const n=rs.length,gf=rs.reduce((x,r)=>x+r.gf,0)/n,ga=rs.reduce((x,r)=>x+r.ga,0)/n;
+    const rs=[R1[t.t],R2[t.t],R3[t.t]].filter(Boolean);
+    let f=t.ppg; rs.forEach((r,i)=>{const ai=a*(i>=2?CFG.r3_form_mult:1);f=(1-ai)*f+ai*r.pts;}); ppgS.push(f);
+    if(rs.length){const ws=rs.map((_,i)=>rw[i]!==undefined?rw[i]:rw[rw.length-1]);const wsum=ws.reduce((x,y)=>x+y,0);
+      const gf=rs.reduce((x,r,i)=>x+r.gf*ws[i],0)/wsum, ga=rs.reduce((x,r,i)=>x+r.ga*ws[i],0)/wsum;
       att.push(clamp(s*(gf/mu)+(1-s))); def.push(clamp(s*(ga/mu)+(1-s)));}
     else{att.push(1);def.push(1);}
   });
@@ -320,7 +322,7 @@ function run(){
   const pa=Math.round(p.pA*100),pd=Math.round(p.pD*100),pb=Math.round(p.pB*100);
   let h2hTxt='Sin enfrentamientos previos';
   if(p.rec){h2hTxt=p.rec[0]+'V · '+p.rec[1]+'E · '+p.rec[2]+'D <span style="color:var(--dim)">(vista '+name(A)+')</span>';}
-  const advHtml=p.adv?'<div class="adv">Clasifica: '+name(A)+' '+Math.round(p.adv[0]*100)+'% · '+name(B)+' '+Math.round(p.adv[1]*100)+'%</div>':'';
+  const advHtml=p.adv?'<div class="adv">🏆 <b>AVANZA '+(p.adv[0]>=p.adv[1]?name(A):name(B))+'</b> (~'+Math.round(Math.max(p.adv[0],p.adv[1])*100)+'%) · '+name(A)+' '+Math.round(p.adv[0]*100)+'% / '+name(B)+' '+Math.round(p.adv[1]*100)+'%'+(Math.abs(p.adv[0]-p.adv[1])<.12?' — moneda al aire, ojo a los penales':'')+'</div>':'';
   // ---- la lectura: justifica la inclinación (sin tecnicismos) ----
   const fav = pa>=pb ? A : B, und = pa>=pb ? B : A;
   const F = name(fav), U = name(und), gap = Math.abs(pa-pb);
